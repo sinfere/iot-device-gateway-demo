@@ -1,0 +1,16 @@
+*.cache/
+aclocal.m4
+autoscan.log
+compile
+config.log
+config.status
+configure
+depcomp
+install-sh
+Makefile
+Makefile.in
+missing
+
+src/gateway*
+src/Makefile
+src/Makefile.in

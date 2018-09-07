@@ -1,0 +1,3 @@
+[submodule "libmqtt"]
+	path = libmqtt
+	url = git@github.com:sinfere/paho.mqtt.c.git
