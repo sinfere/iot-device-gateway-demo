@@ -27,7 +27,7 @@ static void on_remote_write(EV_P_ ev_io *w, int revents)
 
     ev_io_stop(EV_A_ &remote->write_ctx->io);    
 
-    LOGI("on_remote_write: connected");
+    LOGI("[iot] on_remote_write: connected");
     if (client_ctx->on_connect != NULL) {
         client_ctx->on_connect();
     }    
@@ -68,7 +68,7 @@ static void connect_to_remote(EV_P)
         return;
     }
 
-    LOGI("connecting");
+    LOGI("[iot] connecting");
 }
 
 static remote_t* new_remote() 
@@ -123,5 +123,9 @@ int iot_client_write(buffer* b)
         return ret;
     }
 
+    return 0;
+}
+
+int iot_client_destroy() {
     return 0;
 }

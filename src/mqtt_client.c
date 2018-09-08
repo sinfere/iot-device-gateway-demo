@@ -18,43 +18,43 @@ void on_conn_lost(void *context, char *cause)
     MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
     int rc;
 
-    printf("\nConnection lost\n");
+    LOGE("[mqtt] conn lost");
     if (cause) {
-        printf("     cause: %s\n", cause);
+        LOGE("cause: %s", cause);
     }
         
-    printf("Reconnecting\n");
+    LOGI("[mqtt] reconnecting");
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
     if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS) {
-        printf("Failed to start connect, return code %d\n", rc);
+        LOGE("[mqtt] failed to start connect, return code %d\n", rc);
         finished = 1;
     }
 }
 
 void on_disconnect(void* context, MQTTAsync_successData* response)
 {
-    printf("Successful disconnection\n");
+    LOGI("[mqtt] disconnect success");
     disc_finished = 1;
 }
 
 
 void on_subscribe(void* context, MQTTAsync_successData* response)
 {
-    printf("Subscribe succeeded\n");
+    LOGI("[mqtt] subscribe succeess");
     subscribed = 1;
 }
 
 void on_subscribe_fail(void* context, MQTTAsync_failureData* response)
 {
-    printf("Subscribe failed, rc %d\n", response ? response->code : 0);
+    LOGE("[mqtt] subscribe failed, rc %d\n", response ? response->code : 0);
     finished = 1;
 }
 
 
 void on_connect_fail(void* context, MQTTAsync_failureData* response)
 {
-    printf("Connect failed, rc %d\n", response ? response->code : 0);
+    LOGE("[mqtt] connect failed, rc %d\n", response ? response->code : 0);
     finished = 1;
 }
 
@@ -65,9 +65,9 @@ void on_connect(void* context, MQTTAsync_successData* response)
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
     int rc;
 
-    printf("Successful connection\n");
+    LOGI("[mqtt] connect success");
 
-    printf("Subscribing to topic %s\nfor client %s using QoS%d\n\n", READ_TOPIC, CLIENTID, QOS);
+    LOGI("[mqtt] subscribing to topic [%s] for client [%s] using QoS%d", READ_TOPIC, CLIENTID, QOS);
     opts.onSuccess = on_subscribe;
     opts.onFailure = on_subscribe_fail;
     opts.context = client;
@@ -75,7 +75,7 @@ void on_connect(void* context, MQTTAsync_successData* response)
     deliveredtoken = 0;
 
     if ((rc = MQTTAsync_subscribe(client, READ_TOPIC, QOS, &opts)) != MQTTASYNC_SUCCESS) {
-        printf("Failed to start subscribe, return code %d\n", rc);
+        LOGE("[mqtt] failed to start subscribe, return code %d", rc);
         exit(EXIT_FAILURE);
     }
 }
@@ -101,7 +101,7 @@ void mqtt_client_boot(mqtt_client_context_t* ctx)
     conn_opts.username = USERNAME;
     conn_opts.password = PASSWORD;
     if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS) {
-        printf("Failed to start connect, return code %d\n", rc);
+        LOGE("[mqtt] failed to start connect, return code %d", rc);
         exit(EXIT_FAILURE);
     }
 
@@ -138,7 +138,7 @@ int mqtt_client_write(char* topic, char* payload)
     deliveredtoken = 0;
 
     if ((rc = MQTTAsync_sendMessage(mqttClient, topic, &message, &opts)) != MQTTASYNC_SUCCESS) {
-        printf("Failed to start sendMessage, return code %d\n", rc);
+        LOGE("[mqtt] failed to start sendMessage, return code %d", rc);
     }    
 
     return rc;

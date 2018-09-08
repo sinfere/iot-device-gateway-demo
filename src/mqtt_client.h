@@ -1,4 +1,5 @@
 #include <MQTTAsync.h>
+#include "common.h"
 
 #define ADDRESS     "tcp://127.0.0.1:30000"
 #define CLIENTID    "test"

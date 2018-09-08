@@ -46,3 +46,4 @@ typedef struct iot_client_context {
 
 int iot_client_boot(iot_client_context_t* ctx);
 int iot_client_write(buffer* b);
+int iot_client_destroy();
