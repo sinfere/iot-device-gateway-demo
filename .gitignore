@@ -1,3 +1,4 @@
+m4/
 *.cache/
 aclocal.m4
 autoscan.log
