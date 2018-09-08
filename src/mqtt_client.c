@@ -65,8 +65,7 @@ void on_connect(void* context, MQTTAsync_successData* response)
 
     printf("Successful connection\n");
 
-    printf("Subscribing to topic %s\nfor client %s using QoS%d\n\n"
-           "Press Q<Enter> to quit\n\n", READ_TOPIC, CLIENTID, QOS);
+    printf("Subscribing to topic %s\nfor client %s using QoS%d\n\n", READ_TOPIC, CLIENTID, QOS);
     opts.onSuccess = on_subscribe;
     opts.onFailure = on_subscribe_fail;
     opts.context = client;
@@ -123,25 +122,11 @@ int mqtt_destroy(MQTTAsync client)
     return rc;
 }
 
-void on_message_send_success(void* context, MQTTAsync_successData* response)
-{
-	// MQTTAsync client = (MQTTAsync)context;
-	
-}
-
-void on_message_send_fail(void* context, MQTTAsync_failureData* response) 
-{
-    // MQTTAsync client = (MQTTAsync)context;
-}
-
 int mqtt_write(MQTTAsync client, char* topic, char* payload) 
 {
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
 	MQTTAsync_message message = MQTTAsync_message_initializer;
     int rc;
-
-    opts.onSuccess = on_message_send_success;
-    opts.onFailure = on_message_send_fail;
 
     message.payload = payload;
     message.payloadlen = (int)strlen(payload);

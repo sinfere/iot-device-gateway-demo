@@ -21,5 +21,19 @@ LT_INIT
 
 # Checks for library functions.
 
+AC_CHECK_LIB(socket, connect)
+
+dnl Checks for library functions.
+AC_CHECK_FUNCS([malloc memset posix_memalign socket])
+
+AC_ARG_WITH(ev,
+  AS_HELP_STRING([--with-ev=DIR], [use a specific libev library]),
+  [CFLAGS="$CFLAGS -I$withval/include"
+   CPPFLAGS="$CPPFLAGS -I$withval/include"
+   LDFLAGS="$LDFLAGS -L$withval/lib"]
+)
+AC_CHECK_HEADERS([ev.h libev/ev.h], [], [])
+AC_CHECK_LIB([ev], [ev_loop_destroy], [LIBS="-lev $LIBS"], [AC_MSG_ERROR([Couldn't find libev. Try installing libev-dev@<:@el@:>@.])])
+
 AC_CONFIG_FILES([Makefile src/Makefile libmqtt/Makefile])
 AC_OUTPUT

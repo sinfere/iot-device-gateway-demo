@@ -1,11 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-typedef struct {
-    u_int8_t* buf;
-    size_t size;
-} buffer;
+#include "common.h"
 
 typedef struct {
     int is_string_key;

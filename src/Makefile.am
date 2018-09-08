@@ -2,7 +2,7 @@ AM_CFLAGS = -g -O2 -Wall -Werror -Wno-deprecated-declarations -fno-strict-aliasi
 AM_CFLAGS += -I$(top_srcdir)/libmqtt/src
 
 bin_PROGRAMS = gateway
-gateway_SOURCES = main.c bkv.c mqtt_client.c
+gateway_SOURCES = main.c common.c bkv.c mqtt_client.c iot_client.c
 gateway_CFLAGS = $(AM_CFLAGS)
 gateway_LDADD = $(top_builddir)/libmqtt/libmqtt.la
 
