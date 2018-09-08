@@ -10,24 +10,39 @@
 #include <arpa/inet.h>
 
 #include "common.h"
+#include "bkv.h"
 
 #define REMOTE_IP       "127.0.0.1"
 #define REMOTE_PORT     31000
 
-typedef struct {
+#define DEVICE_ID       "test"
+
+typedef struct remote_ctx {
     ev_io io;
     int connected;
     struct remote* remote;
-} remote_ctx;
+} remote_ctx_t;
 
 typedef struct remote {
     int fd;
     
     buffer* read_buffer; 
-    remote_ctx* read_ctx;
+    struct remote_ctx* read_ctx;
 
-    remote_ctx* write_ctx;    
+    struct remote_ctx* write_ctx;    
 } remote_t;
 
-int iot_client_boot();
+typedef void iot_client_on_connect();
+typedef void iot_client_on_disconnect();
+typedef void iot_client_on_message_receive(bkv* b);
+
+typedef struct iot_client_context {
+	iot_client_on_connect* on_connect;
+	iot_client_on_disconnect* on_disconnect;
+	iot_client_on_message_receive* on_message_receive;
+} iot_client_context_t;
+
+#define iot_client_context_initializer { NULL, NULL, NULL }
+
+int iot_client_boot(iot_client_context_t* ctx);
 int iot_client_write(buffer* b);

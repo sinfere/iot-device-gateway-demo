@@ -1,3 +1,5 @@
+.vscode/
+
 m4/
 *.cache/
 aclocal.m4

@@ -108,14 +108,13 @@ int mqtt_destroy(MQTTAsync client)
 {
     int rc;
 
-	MQTTAsync_disconnectOptions disc_opts = MQTTAsync_disconnectOptions_initializer;
+    MQTTAsync_disconnectOptions disc_opts = MQTTAsync_disconnectOptions_initializer;
     disc_opts.onSuccess = on_disconnect;
 
-	if ((rc = MQTTAsync_disconnect(client, &disc_opts)) != MQTTASYNC_SUCCESS)
-	{
-		printf("Failed to start disconnect, return code %d\n", rc);
-		exit(EXIT_FAILURE);
-	}
+    if ((rc = MQTTAsync_disconnect(client, &disc_opts)) != MQTTASYNC_SUCCESS) {
+        printf("Failed to start disconnect, return code %d\n", rc);
+        exit(EXIT_FAILURE);
+    }
 
     MQTTAsync_destroy(&client);
 
@@ -125,7 +124,7 @@ int mqtt_destroy(MQTTAsync client)
 int mqtt_write(MQTTAsync client, char* topic, char* payload) 
 {
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
-	MQTTAsync_message message = MQTTAsync_message_initializer;
+    MQTTAsync_message message = MQTTAsync_message_initializer;
     int rc;
 
     message.payload = payload;
@@ -134,10 +133,9 @@ int mqtt_write(MQTTAsync client, char* topic, char* payload)
     message.retained = 0;
     deliveredtoken = 0;
 
-	if ((rc = MQTTAsync_sendMessage(client, topic, &message, &opts)) != MQTTASYNC_SUCCESS)
-	{
-		printf("Failed to start sendMessage, return code %d\n", rc);
-	}    
+    if ((rc = MQTTAsync_sendMessage(client, topic, &message, &opts)) != MQTTASYNC_SUCCESS) {
+        printf("Failed to start sendMessage, return code %d\n", rc);
+    }    
 
     return rc;
 }

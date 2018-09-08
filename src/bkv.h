@@ -3,6 +3,9 @@
 #include <string.h>
 #include "common.h"
 
+#if !defined(BKV_H)
+#define BKV_H
+
 typedef struct {
     int is_string_key;
     buffer* key;
@@ -73,3 +76,6 @@ void bkv_free_unpack_result(bkv_unpack_result *r);
 void dump_buffer(char* name, buffer* b);
 void dump_kv(kv* t);
 void dump_bkv(bkv* b);
+
+
+#endif
