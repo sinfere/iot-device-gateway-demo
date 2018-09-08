@@ -4,6 +4,10 @@ autoscan.log
 compile
 config.log
 config.status
+config.guess
+config.sub
+libtool
+ltmain.sh
 configure
 depcomp
 install-sh
