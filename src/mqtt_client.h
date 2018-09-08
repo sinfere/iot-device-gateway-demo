@@ -9,6 +9,12 @@
 #define USERNAME    "root"
 #define PASSWORD    "7"
 
-MQTTAsync mqtt_setup(MQTTAsync_messageArrived*);
-int mqtt_write(MQTTAsync, char*, char*);
-int mqtt_destroy(MQTTAsync);
+typedef struct mqtt_client_context_t {
+	MQTTAsync_messageArrived* on_message_receive;
+} mqtt_client_context_t;
+
+#define mqtt_client_context_initializer { NULL }
+
+void mqtt_client_boot(mqtt_client_context_t* ctx);
+int mqtt_client_write(char* topic, char* payload);
+int mqtt_client_destroy();

@@ -8,8 +8,6 @@
 
 ev_io stdin_w;
 
-MQTTAsync mqttClient;
-
 int on_mqtt_message_received(void *context, char *topicName, int topicLen, MQTTAsync_message *message)
 {
     int i;
@@ -50,7 +48,7 @@ static void stdin_cb (EV_P_ ev_io *w, int revents)
     }
 
     if (strcmp(action, "1") == 0) {
-        mqtt_write(mqttClient, "w", "dd");
+        mqtt_client_write("w", "dd");
     }
 
     if (strcmp(action, "2") == 0) {
@@ -61,20 +59,22 @@ static void stdin_cb (EV_P_ ev_io *w, int revents)
 }
 
 void destroy() {
-    mqtt_destroy(mqttClient);
+    mqtt_client_destroy();
 }
 
 int main(int argc, char const *argv[])
 {
     LOGI("boot");
 
-    // mqttClient = mqtt_setup(on_mqtt_message_received);
+    mqtt_client_context_t mqtt_client_ctx = mqtt_client_context_initializer;
+    mqtt_client_ctx.on_message_receive = on_mqtt_message_received;
+    // mqtt_client_boot(&mqtt_client_ctx);
     
-    iot_client_context_t ctx = iot_client_context_initializer;
-    ctx.on_connect = on_iot_client_connect;
-    iot_client_boot(&ctx);
+    iot_client_context_t iot_client_ctx = iot_client_context_initializer;
+    iot_client_ctx.on_connect = on_iot_client_connect;
+    iot_client_boot(&iot_client_ctx);
 
-    usleep(5000 * 1000L);
+    usleep(500 * 1000L);
 
     struct ev_loop *loop = EV_DEFAULT;
     ev_io_init(&stdin_w, stdin_cb, /*STDIN_FILENO*/ 0, EV_READ);

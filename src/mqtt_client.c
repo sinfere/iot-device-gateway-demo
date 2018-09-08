@@ -10,6 +10,8 @@ int disc_finished = 0;
 int subscribed = 0;
 int finished = 0;
 
+static MQTTAsync mqttClient = NULL;
+
 void on_conn_lost(void *context, char *cause)
 {
     MQTTAsync client = (MQTTAsync)context;
@@ -79,7 +81,7 @@ void on_connect(void* context, MQTTAsync_successData* response)
 }
 
 
-MQTTAsync mqtt_setup(MQTTAsync_messageArrived* on_message_received)
+void mqtt_client_boot(mqtt_client_context_t* ctx)
 {
     MQTTAsync client;
     MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
@@ -87,8 +89,10 @@ MQTTAsync mqtt_setup(MQTTAsync_messageArrived* on_message_received)
 
     MQTTAsync_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
 
-    MQTTAsync_setCallbacks(client, client, on_conn_lost, on_message_received, NULL);
-
+    if (ctx->on_message_receive != NULL) {
+        MQTTAsync_setCallbacks(client, client, on_conn_lost, ctx->on_message_receive, NULL);
+    }
+    
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
     conn_opts.onSuccess = on_connect;
@@ -101,27 +105,27 @@ MQTTAsync mqtt_setup(MQTTAsync_messageArrived* on_message_received)
         exit(EXIT_FAILURE);
     }
 
-    return client;
+    mqttClient = client;
 }
 
-int mqtt_destroy(MQTTAsync client) 
+int mqtt_client_destroy() 
 {
     int rc;
 
     MQTTAsync_disconnectOptions disc_opts = MQTTAsync_disconnectOptions_initializer;
     disc_opts.onSuccess = on_disconnect;
 
-    if ((rc = MQTTAsync_disconnect(client, &disc_opts)) != MQTTASYNC_SUCCESS) {
+    if ((rc = MQTTAsync_disconnect(mqttClient, &disc_opts)) != MQTTASYNC_SUCCESS) {
         printf("Failed to start disconnect, return code %d\n", rc);
         exit(EXIT_FAILURE);
     }
 
-    MQTTAsync_destroy(&client);
+    MQTTAsync_destroy(&mqttClient);
 
     return rc;
 }
 
-int mqtt_write(MQTTAsync client, char* topic, char* payload) 
+int mqtt_client_write(char* topic, char* payload) 
 {
     MQTTAsync_responseOptions opts = MQTTAsync_responseOptions_initializer;
     MQTTAsync_message message = MQTTAsync_message_initializer;
@@ -133,7 +137,7 @@ int mqtt_write(MQTTAsync client, char* topic, char* payload)
     message.retained = 0;
     deliveredtoken = 0;
 
-    if ((rc = MQTTAsync_sendMessage(client, topic, &message, &opts)) != MQTTASYNC_SUCCESS) {
+    if ((rc = MQTTAsync_sendMessage(mqttClient, topic, &message, &opts)) != MQTTASYNC_SUCCESS) {
         printf("Failed to start sendMessage, return code %d\n", rc);
     }    
 
