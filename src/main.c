@@ -15,14 +15,14 @@ int on_mqtt_message_receive(void *context, char *topicName, int topicLen, MQTTAs
 
     int i = 0;
     char* p = message->payload;
-    for(i = 0; i < message->payloadlen; i++)
-    {
+    for (i = 0; i < message->payloadlen; i++) {
         putchar(*p++);
     }
     putchar('\n');    
 
     MQTTAsync_freeMessage(&message);
     MQTTAsync_free(topicName);
+    
     return 1;
 }
 
