@@ -11,6 +11,7 @@ int subscribed = 0;
 int finished = 0;
 
 static MQTTAsync mqttClient = NULL;
+static mqtt_client_context_t* client_ctx = NULL;
 
 void on_conn_lost(void *context, char *cause)
 {
@@ -66,15 +67,15 @@ void on_connect(void* context, MQTTAsync_successData* response)
     int rc;
 
     LOGI("[mqtt] connect success");
+    LOGI("[mqtt] subscribing to topic [%s] for client [%s] using QoS%d", client_ctx->read_topic, client_ctx->client_id, client_ctx->qos);
 
-    LOGI("[mqtt] subscribing to topic [%s] for client [%s] using QoS%d", READ_TOPIC, CLIENTID, QOS);
     opts.onSuccess = on_subscribe;
     opts.onFailure = on_subscribe_fail;
     opts.context = client;
 
     deliveredtoken = 0;
 
-    if ((rc = MQTTAsync_subscribe(client, READ_TOPIC, QOS, &opts)) != MQTTASYNC_SUCCESS) {
+    if ((rc = MQTTAsync_subscribe(client, client_ctx->read_topic, client_ctx->qos, &opts)) != MQTTASYNC_SUCCESS) {
         LOGE("[mqtt] failed to start subscribe, return code %d", rc);
         exit(EXIT_FAILURE);
     }
@@ -87,25 +88,30 @@ void mqtt_client_boot(mqtt_client_context_t* ctx)
     MQTTAsync_connectOptions conn_opts = MQTTAsync_connectOptions_initializer;
     int rc;
 
-    MQTTAsync_create(&client, ADDRESS, CLIENTID, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+    client_ctx = ctx;
+
+    MQTTAsync_create(&client, ctx->server_addr, ctx->client_id, MQTTCLIENT_PERSISTENCE_NONE, NULL);
+    mqttClient = client;
 
     if (ctx->on_message_receive != NULL) {
         MQTTAsync_setCallbacks(client, client, on_conn_lost, ctx->on_message_receive, NULL);
     }
-    
+
+
     conn_opts.keepAliveInterval = 20;
     conn_opts.cleansession = 1;
     conn_opts.onSuccess = on_connect;
     conn_opts.onFailure = on_connect_fail;
     conn_opts.context = client;
-    conn_opts.username = USERNAME;
-    conn_opts.password = PASSWORD;
+    conn_opts.username = ctx->username;
+    conn_opts.password = ctx->password;
     if ((rc = MQTTAsync_connect(client, &conn_opts)) != MQTTASYNC_SUCCESS) {
         LOGE("[mqtt] failed to start connect, return code %d", rc);
         exit(EXIT_FAILURE);
     }
 
     mqttClient = client;
+    
 }
 
 int mqtt_client_destroy() 
@@ -133,7 +139,7 @@ int mqtt_client_write(char* topic, char* payload)
 
     message.payload = payload;
     message.payloadlen = (int)strlen(payload);
-    message.qos = QOS;
+    message.qos = client_ctx->qos;
     message.retained = 0;
     deliveredtoken = 0;
 

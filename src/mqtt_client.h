@@ -1,20 +1,19 @@
 #include <MQTTAsync.h>
 #include "common.h"
 
-#define ADDRESS     "tcp://127.0.0.1:30000"
-#define CLIENTID    "test"
-#define READ_TOPIC  "test-c"
-#define PAYLOAD     "Hello World!"
-#define QOS         1
-#define TIMEOUT     10000L
-#define USERNAME    "root"
-#define PASSWORD    "7"
-
 typedef struct mqtt_client_context_t {
+    char* server_addr;
+    char* username;
+    char* password;
+    char* client_id;
+    char* read_topic;
+    int qos;
+    int timeout;
+
 	MQTTAsync_messageArrived* on_message_receive;
 } mqtt_client_context_t;
 
-#define mqtt_client_context_initializer { NULL }
+// #define mqtt_client_context_initializer { NULL, NULL, NULL, NULL, NULL, 1, 10000, NULL }
 
 void mqtt_client_boot(mqtt_client_context_t* ctx);
 int mqtt_client_write(char* topic, char* payload);

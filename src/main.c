@@ -5,6 +5,7 @@
 
 #include "mqtt_client.h"
 #include "iot_client.h"
+#include "config.h"
 
 ev_io stdin_w;
 
@@ -19,10 +20,14 @@ int on_mqtt_message_receive(void *context, char *topicName, int topicLen, MQTTAs
 void on_iot_client_connect() {
     LOGI("[main] on iot client connect");
 
+    iot_client_write_login_frame(DEVICE_ID);
+    LOGI("[main] login to iot");
 }
 
 void on_iot_client_message_receive(bkv* b) {
     LOGI("[main] on iot client message receive");
+
+    dump_bkv(b);
 
     bkv_free(b);
 }
@@ -59,22 +64,41 @@ static void stdin_cb(EV_P_ ev_io *w, int revents)
     }    
 }
 
+static void boot_mqtt() {
+    mqtt_client_context_t* mqtt_client_ctx = malloc(sizeof(mqtt_client_context_t));
+    memset(mqtt_client_ctx, 0, sizeof(mqtt_client_context_t));
+    mqtt_client_ctx->server_addr = MQTT_ADDRESS;
+    mqtt_client_ctx->username = MQTT_USERNAME;
+    mqtt_client_ctx->password = MQTT_PASSWORD;
+    mqtt_client_ctx->client_id = MQTT_CLIENT_ID;
+    mqtt_client_ctx->read_topic = MQTT_READ_TOPIC;
+    mqtt_client_ctx->qos = MQTT_QOS;
+    mqtt_client_ctx->on_message_receive = on_mqtt_message_receive;
+    mqtt_client_boot(mqtt_client_ctx);
+}
+
+static void boot_iot() {
+    iot_client_context_t* iot_client_ctx = malloc(sizeof(iot_client_context_t));
+    memset(iot_client_ctx, 0, sizeof(iot_client_context_t));
+    iot_client_ctx->gateway_server_ip = IOT_GATEWAY_IP;
+    iot_client_ctx->gateway_server_port = IOT_GATEWAY_PORT;
+    iot_client_ctx->on_connect = on_iot_client_connect;
+    iot_client_ctx->on_message_receive = on_iot_client_message_receive;
+    iot_client_boot(iot_client_ctx);
+}
+
 int main(int argc, char const *argv[])
 {
     LOGI("[main] boot");
 
-    mqtt_client_context_t mqtt_client_ctx = mqtt_client_context_initializer;
-    mqtt_client_ctx.on_message_receive = on_mqtt_message_receive;
-    mqtt_client_boot(&mqtt_client_ctx);
-    
-    iot_client_context_t iot_client_ctx = iot_client_context_initializer;
-    iot_client_ctx.on_connect = on_iot_client_connect;
-    iot_client_ctx.on_message_receive = on_iot_client_message_receive;
-    iot_client_boot(&iot_client_ctx);
+    boot_mqtt();
 
+    boot_iot();
+    
     usleep(500 * 1000L);
 
     struct ev_loop *loop = EV_DEFAULT;
+
     ev_io_init(&stdin_w, stdin_cb, /*STDIN_FILENO*/ 0, EV_READ);
     ev_io_start(EV_A_ &stdin_w);
 

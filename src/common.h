@@ -15,12 +15,13 @@ typedef struct {
 } buffer;
 
 buffer* buffer_new(u_int8_t* buf, size_t size);
-buffer* buffer_alloc();
+buffer* buffer_alloc(size_t capacity);
 buffer* buffer_clone(buffer* b);
 int buffer_grow(buffer* b, size_t capacity);
 int buffer_append(buffer* b, u_int8_t* buf, size_t size);
+void buffer_free(buffer* b);
 
-#define USE_TTY 0
+#define USE_TTY 1
 #define TIME_FORMAT "%F %T"
 
 #define LOGI(format, ...)                                                    \
@@ -46,11 +47,11 @@ int buffer_append(buffer* b, u_int8_t* buf, size_t size);
         char timestr[20];                                                     \
         strftime(timestr, 20, TIME_FORMAT, localtime(&now));                  \
         if (USE_TTY) {                                                        \
-            fprintf(stderr, "\e[01;35m %s ERROR: \e[0m" format "\n", timestr, \
+            fprintf(stderr, "\e[01;35m%s ERROR: \e[0m" format "\n", timestr, \
                     ## __VA_ARGS__);                                          \
             fflush(stderr);                                                   \
         } else {                                                              \
-            fprintf(stderr, " %s ERROR: " format "\n", timestr,               \
+            fprintf(stderr, "%s ERROR: " format "\n", timestr,               \
                     ## __VA_ARGS__);                                          \
             fflush(stderr);                                                   \
         }                                                                     \

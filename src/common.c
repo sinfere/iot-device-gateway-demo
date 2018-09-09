@@ -11,8 +11,7 @@ buffer* buffer_new(u_int8_t* buf, size_t size) {
     return b;
 }
 
-buffer* buffer_alloc() {
-    size_t capacity = BUFFER_DEFAULT_SIZE;
+buffer* buffer_alloc(size_t capacity) {
     u_int8_t *new_buf = malloc(capacity * sizeof(u_int8_t));
     memset(new_buf, 0, capacity * sizeof(u_int8_t));
 
@@ -55,4 +54,12 @@ int buffer_append(buffer* b, u_int8_t* buf, size_t size) {
     b->capacity = b->size;
 
     return 0;
+}
+
+void buffer_free(buffer* b) {
+    if (b->buf != NULL) {
+        free(b->buf);
+    }
+    
+    free(b);
 }

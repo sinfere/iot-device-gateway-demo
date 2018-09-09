@@ -335,6 +335,7 @@ buffer* bkv_pack(bkv* b) {
 
 bkv_unpack_result* bkv_unpack(u_int8_t* buf, size_t buf_size) {
     bkv_unpack_result *br = malloc(sizeof(bkv_unpack_result));
+    memset(br, 0, sizeof(bkv_unpack_result));
     bkv* b = bkv_new();
     br->bkv = b;
 
