@@ -92,6 +92,9 @@ static void on_remote_read(EV_P_ ev_io *w, int revents)
     LOGI("[iot] on_remote_read");
 
     buffer* b = remote->read_buffer;
+    LOGI("[iot] on_remote_read: buffer: %ld / %ld", b->size, b->capacity);
+    buffer_grow(b, 2048);
+
     int r = recv(remote->fd, b->buf + b->size, b->capacity - b->size, 0);
     if (r == 0) {
         // connection closed
@@ -114,16 +117,23 @@ static void on_remote_read(EV_P_ ev_io *w, int revents)
 
     LOGI("[iot] read %d", r);
 
-    b->size = r;
+    b->size += r;
 
     parse_result_t *pr = parse(b);
     if (pr->code == PARSE_RESULT_CODE_OK) {
         mb = pr->bkv;
-    } else {
-        free(b);
-        if (pr->code == PARSE_RESULT_CODE_INCOMPLETE) {
+        if (pr->pending_parse_buffer != NULL) { // use pending buffer
+            free(remote->read_buffer);
             remote->read_buffer = pr->pending_parse_buffer;
-        } else {
+        } else { // reset buffer
+            b->size = 0;
+            memset(b->buf, 0, b->capacity * sizeof(u_int8_t));
+        }
+    } else {
+        if (pr->code == PARSE_RESULT_CODE_INCOMPLETE) { // use pending buffer
+            free(remote->read_buffer);
+            remote->read_buffer = pr->pending_parse_buffer;
+        } else { // reset buffer
             b->size = 0;
             memset(b->buf, 0, b->capacity * sizeof(u_int8_t));
         }
@@ -305,6 +315,9 @@ static parse_result_t* parse(buffer* b) {
             LOGI("[iot] parse: ok");
             r->code = PARSE_RESULT_CODE_OK;
             r->bkv = bkr->bkv;
+            if (h + 4 + len < b->size) {
+                r->pending_parse_buffer = buffer_new(b->buf + h + 4 + len, b->size - (h + 4 + len));
+            }
             free(bkr);
             return r;
         } else {

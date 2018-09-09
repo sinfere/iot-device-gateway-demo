@@ -37,6 +37,7 @@ int buffer_grow(buffer* b, size_t capacity) {
     }
 
     b->buf = buf;
+    b->capacity = capacity;
     
     return 0;
 }
