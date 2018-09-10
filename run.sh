@@ -4,4 +4,5 @@ set -e
 set -o pipefail
 
 make
-./src/gateway
+LD_LIBRARY_PATH=/usr/local/lib \
+    ./src/gateway
