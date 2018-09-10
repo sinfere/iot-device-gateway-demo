@@ -2,6 +2,8 @@
     "files.associations": {
         "mqttclient.h": "c",
         "mqttasync.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "type_traits": "c",
+        "limits": "c"
     }
 }

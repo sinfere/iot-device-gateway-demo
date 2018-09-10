@@ -80,7 +80,7 @@ buffer* encode_length(u_int64_t length) {
 typedef struct {
     int code;
     u_int64_t length;
-    uint64_t length_byte_size;
+    u_int64_t length_byte_size;
 } decode_length_result;
 
 decode_length_result* decode_length(u_int8_t * buf, size_t buf_size) {
@@ -416,7 +416,7 @@ void dump_kv(kv* t) {
         free(string_key);
     } else {
         u_int64_t number_key = kv_get_number_key(t);
-        printf("%-30s %lld \n", "kv.number_key:", number_key);
+        printf("%-30s %llu \n", "kv.number_key:", number_key);
     }
     dump_buffer("kv.value", t->value);   
     printf("\n"); 
