@@ -11,7 +11,7 @@ Make and Install `https://github.com/json-c/json-c.git`
 
 #### On Ubuntu
 
-`sudo apt install make automake libtool libev-dev`
+`sudo apt install git make autoconf automake libtool libev-dev`
 
 ### Build instructions:
 ----------------------------
