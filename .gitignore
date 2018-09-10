@@ -1,6 +1,8 @@
 .vscode/
 
 m4/
+!m4/AX_PTHREAD.m4
+
 *.cache/
 aclocal.m4
 autoscan.log

@@ -3,7 +3,7 @@ AM_CFLAGS += -I$(top_srcdir)/libmqtt/src
 
 bin_PROGRAMS = gateway
 gateway_SOURCES = main.c common.c bkv.c mqtt_client.c iot_client.c json.c
-gateway_CFLAGS = $(AM_CFLAGS)
-gateway_LDADD = $(top_builddir)/libmqtt/libmqtt.la
+gateway_CFLAGS = $(AM_CFLAGS) $(PTHREAD_CFLAGS)
+gateway_LDADD = $(PTHREAD_LIBS) $(top_builddir)/libmqtt/libmqtt.la 
 
 all: gateway

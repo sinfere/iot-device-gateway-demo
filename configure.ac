@@ -21,6 +21,8 @@ LT_INIT
 
 # Checks for library functions.
 
+AX_PTHREAD
+
 AC_CHECK_LIB(socket, connect)
 
 dnl Checks for library functions.
