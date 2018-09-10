@@ -1,4 +1,5 @@
 #include "bkv.h"
+#include <inttypes.h>
 
 void reverse(u_int8_t * bs, size_t size) {
     for (int i = 0, j = size - 1; i < j; i++, j--) {
@@ -416,7 +417,7 @@ void dump_kv(kv* t) {
         free(string_key);
     } else {
         u_int64_t number_key = kv_get_number_key(t);
-        printf("%-30s %llu \n", "kv.number_key:", number_key);
+        printf("%-30s %"PRIu64" \n", "kv.number_key:", number_key);
     }
     dump_buffer("kv.value", t->value);   
     printf("\n"); 
