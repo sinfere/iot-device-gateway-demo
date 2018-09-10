@@ -1,8 +1,5 @@
 #!/bin/sh
 
-set -e
-set -o pipefail
-
 rm -rf *.cache \
     aclocal.m4 \
     autoscan.log \
