@@ -50,7 +50,11 @@ void destroy() {
 static void stdin_cb(EV_P_ ev_io *w, int revents)
 {
     char action[99];
-    fgets(action, 30, stdin);
+    
+    if (fgets(action, 30, stdin) == NULL) {
+        return;
+    }
+
     size_t ln = strlen(action)-1;
     if (action[ln] == '\n') {
         action[ln] = '\0';
