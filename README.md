@@ -1,18 +1,18 @@
-`Gateway demo`
-==============
+# iot-device-gateway-demo
 
-Install prerequisites
------------------------
+### Install prerequisites
+----------------------------
+
 Make and Install `https://github.com/json-c/json-c.git`
 
-On CentOS
------------------------
+#### On CentOS
+
 `yum install -y automake libtool libev libev-libevent-devel`
 
 ### Build instructions:
-
+----------------------------
 ```sh
-$ ./configure  # --enable-threading
-$ make
-$ make install
+$ git submodule update --init --recursive
+$ ./build.sh
+$ ./run.sh
 ```
