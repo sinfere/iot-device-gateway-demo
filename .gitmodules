@@ -1,3 +1,6 @@
 [submodule "libmqtt"]
 	path = libmqtt
 	url = git@github.com:sinfere/paho.mqtt.c.git
+[submodule "libjson"]
+	path = libjson
+	url = git@github.com:json-c/json-c.git

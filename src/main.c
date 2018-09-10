@@ -6,6 +6,7 @@
 #include "mqtt_client.h"
 #include "iot_client.h"
 #include "config.h"
+#include "json.h"
 
 ev_io stdin_w;
 
@@ -64,13 +65,20 @@ static void stdin_cb(EV_P_ ev_io *w, int revents)
 
     if (strcmp(action, "1") == 0) {
         mqtt_client_write("w", "dd");
+        return;
     }
 
     if (strcmp(action, "2") == 0) {
         char* content = "dd";
         buffer* b = buffer_new((u_int8_t *)content, strlen(content));
         iot_client_write(b);
-    }    
+        return;
+    }   
+
+    if (strcmp(action, "json-parse-1") == 0) {
+        parse_z3_gateway_device_joinded_message_example();
+        return;
+    }        
 }
 
 static void boot_mqtt() {
