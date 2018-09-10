@@ -49,8 +49,8 @@ void destroy() {
 // command line action handler
 static void stdin_cb(EV_P_ ev_io *w, int revents)
 {
-    char action[20];
-    fgets(action, 100, stdin);
+    char action[99];
+    fgets(action, 30, stdin);
     size_t ln = strlen(action)-1;
     if (action[ln] == '\n') {
         action[ln] = '\0';
